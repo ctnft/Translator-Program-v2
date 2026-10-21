@@ -1,0 +1,147 @@
+domain: food_science
+version: "1.5"
+terms:
+  # Core food-science terminology
+  - source: pasteurization
+    target: pasteurisasi
+    status: locked
+    confidence: 1.0
+  - source: moisture content
+    target: kadar air
+    status: locked
+    confidence: 1.0
+  - source: water activity
+    target: aktivitas air
+    status: locked
+    confidence: 1.0
+  - source: shelf life
+    target: umur simpan
+    status: locked
+    confidence: 1.0
+  - source: heat treatment
+    target: perlakuan panas
+    status: locked
+    confidence: 1.0
+
+  # Sensory-science terminology validated from the current deck/review.
+  # Longer phrases intentionally come before shorter concepts; TerminologyLock
+  # also sorts by source length before applying them.
+  - source: Origin of the Off Note
+    target: Sumber Rasa yang Menyimpang
+    status: locked
+    confidence: 1.0
+  - source: Origin of Off Notes
+    target: Sumber Rasa yang Menyimpang
+    status: locked
+    confidence: 1.0
+  - source: Safety Precautions
+    target: Tindakan Pencegahan Keselamatan
+    status: locked
+    confidence: 1.0
+  - source: Still Water
+    target: Air Tanpa Karbonasi
+    status: locked
+    confidence: 1.0
+  - source: Sparkling Water
+    target: Air Berkarbonasi
+    status: locked
+    confidence: 1.0
+  - source: Flavoured Beverages
+    target: Minuman Berperisa
+    status: locked
+    confidence: 1.0
+  - source: Flavoured Beverage
+    target: Minuman Berperisa
+    status: locked
+    confidence: 1.0
+  - source: Flavored Beverages
+    target: Minuman Berperisa
+    status: locked
+    confidence: 1.0
+  - source: Flavored Beverage
+    target: Minuman Berperisa
+    status: locked
+    confidence: 1.0
+  - source: Sensory Evaluation
+    target: Evaluasi Sensori
+    status: locked
+    confidence: 1.0
+  - source: Sensory Analysis
+    target: Analisis Sensori
+    status: locked
+    confidence: 1.0
+  - source: Sensory Panel
+    target: Panel Sensori
+    status: locked
+    confidence: 1.0
+  - source: Sensory Descriptor
+    target: Deskriptor Sensori
+    status: locked
+    confidence: 1.0
+  - source: Off Notes
+    target: Rasa Menyimpang
+    status: locked
+    confidence: 1.0
+  - source: Off Note
+    target: Rasa Menyimpang
+    status: locked
+    confidence: 1.0
+  - source: off-notes
+    target: rasa menyimpang
+    status: locked
+    confidence: 1.0
+  - source: off-note
+    target: rasa menyimpang
+    status: locked
+    confidence: 1.0
+  - source: Typical Concentration Range
+    target: Rentang Konsentrasi Tipikal
+    status: locked
+    confidence: 1.0
+  - source: Cucumber
+    target: Mentimun
+    status: locked
+    confidence: 1.0
+  - source: Earthy
+    target: Aroma Tanah
+    status: locked
+    confidence: 1.0
+  - source: Musty
+    target: Apek
+    status: locked
+    confidence: 1.0
+  - source: Metallic
+    target: Metalik
+    status: locked
+    confidence: 1.0
+  - source: Medicinal
+    target: Medisinal
+    status: locked
+    confidence: 1.0
+  - source: Roasted
+    target: Panggang
+    status: locked
+    confidence: 1.0
+
+  # Preserve locks. These are product/company/standard identifiers, not prose.
+  - source: GMP Flavour Standard
+    status: preserve_locked
+    confidence: 1.0
+  - source: FlavorActiV
+    status: preserve_locked
+    confidence: 1.0
+  - source: Danone
+    status: preserve_locked
+    confidence: 1.0
+  - source: HACCP
+    status: preserve_locked
+    confidence: 1.0
+  - source: GMP
+    status: preserve_locked
+    confidence: 1.0
+  - source: SDS
+    status: preserve_locked
+    confidence: 1.0
+  - source: FDA
+    status: preserve_locked
+    confidence: 1.0

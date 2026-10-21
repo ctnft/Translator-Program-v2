@@ -1,0 +1,10 @@
+pyyaml>=6.0
+python-dotenv>=1.2
+httpx>=0.28
+
+[:sys_platform == "win32"]
+pywin32>=312
+
+[test]
+pytest>=9.0
+pytest-cov>=7.0

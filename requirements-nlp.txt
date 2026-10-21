@@ -1,0 +1,4 @@
+# Optional legacy NLP experiments; not required by Phase 5.1.4 runtime.
+spacy>=3.8
+regex>=2026.0
+sqlalchemy>=2.0

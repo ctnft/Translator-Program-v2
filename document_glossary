@@ -1,0 +1,23 @@
+CREATE TABLE document_glossary (
+
+    id INTEGER PRIMARY KEY,
+
+
+    document_id TEXT,
+
+
+    source_term TEXT,
+
+
+    target_term TEXT,
+
+
+    occurrence_count INTEGER,
+
+
+    first_seen_slide INTEGER,
+
+
+    last_seen_slide INTEGER
+
+);

@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: translator-program
+Version: 0.1.6.5
+Requires-Dist: pyyaml>=6.0
+Requires-Dist: python-dotenv>=1.2
+Requires-Dist: httpx>=0.28
+Requires-Dist: pywin32>=312; sys_platform == "win32"
+Provides-Extra: test
+Requires-Dist: pytest>=9.0; extra == "test"
+Requires-Dist: pytest-cov>=7.0; extra == "test"

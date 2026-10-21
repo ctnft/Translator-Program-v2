@@ -1,0 +1,301 @@
+domain: food_science
+version: "2026.10.21-1"
+policy:
+  precedence:
+    - BPOM
+    - SNI_BSN
+    - KBBI
+    - Codex_ISO_reference
+    - contextual_mapping
+  note: >-
+    Istilah locked dipakai sebagai padanan Indonesia yang telah diverifikasi dari nomenklatur
+    BPOM/SNI atau istilah Indonesia yang sangat mapan. Codex/ISO dipakai untuk mencocokkan
+    konsep Inggris dengan kategori/istilah Indonesia, bukan untuk menggantikan ketentuan Indonesia.
+terms:
+  # --- Sensory science: BSN/SNI ISO terminology ---
+  - source: Sensory Analysis
+    target: Analisis Sensori
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 6658:2017; SNI ISO 5492:2008"
+    english_reference: "ISO 6658 / ISO 5492"
+  - source: Sensory Evaluation
+    target: Evaluasi Sensori
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 13300-1:2006 (laboratorium evaluasi sensori)"
+    english_reference: "ISO 13300-1"
+  - source: Sensory Evaluation Laboratory
+    target: Laboratorium Evaluasi Sensori
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 13300-1:2006"
+    english_reference: "ISO 13300-1"
+  - source: Sensory Assessor
+    target: Asesor Sensori
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 8586:2017"
+    english_reference: "ISO 8586"
+  - source: Selected Assessor
+    target: Asesor Terpilih
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 8586:2017"
+    english_reference: "ISO 8586"
+  - source: Expert Sensory Assessor
+    target: Asesor Sensori Ahli
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 8586:2017"
+    english_reference: "ISO 8586"
+  - source: Triangle Test
+    target: Uji Segitiga
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 4120:2021"
+    english_reference: "ISO 4120"
+  - source: Paired Comparison Test
+    target: Tes Perbandingan Berpasangan
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 5495:2005"
+    english_reference: "ISO 5495"
+  - source: Ranking
+    target: Pemeringkatan
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 8587:2006"
+    english_reference: "ISO 8587"
+  - source: Texture Profile
+    target: Profil Tekstur
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 11036:2020"
+    english_reference: "ISO 11036"
+  - source: Sensory Profile
+    target: Profil Sensori
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 11035:1994"
+    english_reference: "ISO 11035"
+  - source: Descriptor
+    target: Deskriptor
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 11035:1994"
+    english_reference: "ISO 11035"
+  - source: Shelf Life
+    target: Umur Simpan
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 16779:2015"
+    english_reference: "ISO 16779"
+  - source: Test Room
+    target: Ruang Uji
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI ISO 8589:2017"
+    english_reference: "ISO 8589"
+
+  # --- Dairy / beverage categories: BPOM matched to Codex GSFA ---
+  - source: Beverage Whitener
+    target: Krimer Minuman
+    status: locked
+    authority: BPOM
+    reference: "Kategori Pangan 01.3.2 Krimer Minuman"
+    english_reference: "Codex GSFA 01.3.2 Beverage whiteners"
+  - source: Beverage Whiteners
+    target: Krimer Minuman
+    status: locked
+    authority: BPOM
+    reference: "Kategori Pangan 01.3.2 Krimer Minuman"
+    english_reference: "Codex GSFA 01.3.2 Beverage whiteners"
+  - source: Non-dairy Creamer
+    target: Krimer Nabati
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI 4444:2018 Krimer nabati bubuk (generic concept: krimer nabati)"
+    english_reference: "Codex GSFA 01.3.2 Beverage whiteners"
+  - source: Powdered Non-dairy Creamer
+    target: Krimer Minuman Nabati Bubuk
+    status: locked
+    authority: BPOM
+    reference: "Pengumuman Registrasi Krimer Nabati Bubuk BPOM 30-04-2026; Kategori 01.3.2"
+    english_reference: "Codex GSFA 01.3.2 Beverage whiteners, powdered form"
+  - source: Dairy Drinks
+    target: Minuman Susu
+    status: locked
+    authority: BPOM
+    reference: "Jenis Pangan BPOM 01.1.2: Minuman Susu"
+    english_reference: "Codex dairy-based/fluid milk drinks"
+  - source: Dairy-based Drinks
+    target: Minuman Berbasis Susu
+    status: locked
+    authority: BPOM
+    reference: "Kategori BPOM: Minuman Berbasis Susu yang Berperisa dan/atau Difermentasi"
+    english_reference: "Codex flavoured fluid milk / dairy-based drinks"
+  - source: Flavoured Fluid Milk Drinks
+    target: Minuman Susu Cair Rasa/Berperisa
+    status: locked
+    authority: BPOM
+    reference: "PerBPOM 26/2021: Minuman Susu Cair Rasa/Berperisa"
+    english_reference: "Codex 01.1.4 Flavoured fluid milk drinks"
+  - source: Flavored Fluid Milk Drinks
+    target: Minuman Susu Cair Rasa/Berperisa
+    status: locked
+    authority: BPOM
+    reference: "PerBPOM 26/2021: Minuman Susu Cair Rasa/Berperisa"
+    english_reference: "Codex 01.1.4 Flavoured fluid milk drinks"
+  - source: Fermented Dairy Products
+    target: Produk Susu Fermentasi
+    status: locked
+    authority: BPOM
+    reference: "Kategori BPOM 01.2.1: Produk Susu Fermentasi"
+    english_reference: "Codex fermented milk products"
+  - source: Fermented Dairy
+    target: Produk Susu Fermentasi
+    status: locked
+    authority: BPOM
+    reference: "Kategori BPOM 01.2.1: Produk Susu Fermentasi"
+    english_reference: "Codex fermented milk products"
+  - source: Dairy-based Desserts
+    target: Makanan Pencuci Mulut Berbahan Dasar Susu
+    status: locked
+    authority: BPOM
+    reference: "Kategori BPOM 01.7: Makanan Pencuci Mulut Berbahan Dasar Susu"
+    english_reference: "Codex GSFA 01.7 Dairy-based desserts"
+  - source: Dairy Dessert
+    target: Makanan Pencuci Mulut Berbahan Dasar Susu
+    status: locked
+    authority: BPOM
+    reference: "Kategori BPOM 01.7"
+    english_reference: "Codex GSFA 01.7 Dairy-based desserts"
+  - source: Plant Based Dessert
+    target: Makanan Pencuci Mulut Berbasis Nabati
+    status: locked
+    authority: contextual_mapping
+    reference: "Padanan kontekstual; tidak diklaim sebagai nama kategori BPOM 01.7"
+    english_reference: "Plant-based dessert"
+  - source: Dairy / Plant Based Dessert
+    target: Makanan Pencuci Mulut Berbasis Susu/Nabati
+    status: locked
+    authority: contextual_mapping
+    reference: "Gabungan istilah kategori; mempertahankan dua konsep pada source"
+    english_reference: "Dairy / Plant Based Dessert"
+  - source: Carbonated Water-based Flavoured Drinks
+    target: Minuman Berbasis Air Berperisa yang Berkarbonat
+    status: locked
+    authority: BPOM
+    reference: "Kategori BPOM 14.1.4.1"
+    english_reference: "Codex GSFA 14.1.4.1 Carbonated water-based flavoured drinks"
+  - source: Non-carbonated Water-based Flavoured Drinks
+    target: Minuman Berbasis Air Berperisa Tidak Berkarbonat
+    status: locked
+    authority: BPOM
+    reference: "Kategori BPOM 14.1.4.2"
+    english_reference: "Codex GSFA 14.1.4.2 Non-carbonated water-based flavoured drinks"
+  - source: Carbonated Flavoured Beverage
+    target: Minuman Berperisa Berkarbonasi
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI 8374:2018 Minuman berperisa berkarbonasi"
+    english_reference: "Carbonated flavoured beverage"
+  - source: Carbonated Flavoured Beverages
+    target: Minuman Berperisa Berkarbonasi
+    status: locked
+    authority: SNI_BSN
+    reference: "SNI 8374:2018 Minuman berperisa berkarbonasi"
+    english_reference: "Carbonated flavoured beverages"
+
+  # --- BPOM regulatory vocabulary ---
+  - source: Food Additive
+    target: Bahan Tambahan Pangan
+    status: locked
+    authority: BPOM
+    reference: "Terminologi regulasi BPOM"
+  - source: Food Additives
+    target: Bahan Tambahan Pangan
+    status: locked
+    authority: BPOM
+    reference: "Terminologi regulasi BPOM"
+  - source: Flavouring Substance
+    target: Senyawa Perisa
+    status: locked
+    authority: BPOM
+    reference: "PerBPOM 13/2020 tentang Bahan Tambahan Pangan Perisa"
+  - source: Flavoring Substance
+    target: Senyawa Perisa
+    status: locked
+    authority: BPOM
+    reference: "PerBPOM 13/2020 tentang Bahan Tambahan Pangan Perisa"
+  - source: Flavouring Preparation
+    target: Preparat Perisa
+    status: locked
+    authority: BPOM
+    reference: "PerBPOM 13/2020 tentang Bahan Tambahan Pangan Perisa"
+  - source: Flavoring Preparation
+    target: Preparat Perisa
+    status: locked
+    authority: BPOM
+    reference: "PerBPOM 13/2020 tentang Bahan Tambahan Pangan Perisa"
+  - source: Flavouring
+    target: Perisa
+    status: locked
+    authority: BPOM
+    reference: "PerBPOM 13/2020 tentang Bahan Tambahan Pangan Perisa"
+  - source: Flavoring
+    target: Perisa
+    status: locked
+    authority: BPOM
+    reference: "PerBPOM 13/2020 tentang Bahan Tambahan Pangan Perisa"
+  - source: Processing Aid
+    target: Bahan Penolong
+    status: locked
+    authority: BPOM
+    reference: "Pedoman pelabelan/registrasi pangan olahan BPOM"
+  - source: Emulsifier
+    target: Pengemulsi
+    status: locked
+    authority: BPOM
+    reference: "Daftar golongan BTP BPOM"
+  - source: Stabilizer
+    target: Penstabil
+    status: locked
+    authority: BPOM
+    reference: "Daftar golongan BTP BPOM"
+  - source: Thickener
+    target: Pengental
+    status: locked
+    authority: BPOM
+    reference: "Daftar golongan BTP BPOM"
+  - source: Preservative
+    target: Pengawet
+    status: locked
+    authority: BPOM
+    reference: "Daftar golongan BTP BPOM"
+  - source: Acidity Regulator
+    target: Pengatur Keasaman
+    status: locked
+    authority: BPOM
+    reference: "Daftar golongan BTP BPOM"
+  - source: Anti-caking Agent
+    target: Antikempal
+    status: locked
+    authority: BPOM
+    reference: "Daftar golongan BTP BPOM"
+  - source: Gelling Agent
+    target: Pembentuk Gel
+    status: locked
+    authority: BPOM
+    reference: "Daftar golongan BTP BPOM"
+  - source: Bulking Agent
+    target: Peningkat Volume
+    status: locked
+    authority: BPOM
+    reference: "Daftar golongan BTP BPOM"
+  - source: Sweetener
+    target: Pemanis
+    status: locked
+    authority: BPOM
+    reference: "Daftar golongan BTP BPOM"

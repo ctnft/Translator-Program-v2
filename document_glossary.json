@@ -1,0 +1,14 @@
+class DocumentGlossary:
+
+
+    def generate(
+        self,
+        document
+    ):
+
+        terms = extract_terms(
+            document
+        )
+
+
+        return terms
