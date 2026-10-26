@@ -52,10 +52,16 @@ class AppConfig:
     ollama_batch_num_predict: int
     context_fallback_enabled: bool
     context_allow_legacy_tm: bool
+    zero_untranslated_recovery_enabled: bool
     prompt_version: str
+    expert_profile: str
+    expert_profile_file: Path
     terminology_file: Path
     standard_terminology_file: Path
     state_db: Path
+    word_state_db: Path
+    word_save_batch_size: int
+    word_smart_eligibility: bool
     tm_db: Path
     cache_db: Path
     input_dir: Path
@@ -84,10 +90,16 @@ class AppConfig:
             ollama_batch_num_predict=max(128, int(os.getenv("OLLAMA_BATCH_NUM_PREDICT", "1024"))),
             context_fallback_enabled=_env_bool("CONTEXT_FALLBACK_ENABLED", True),
             context_allow_legacy_tm=_env_bool("CONTEXT_ALLOW_LEGACY_TM", False),
-            prompt_version=os.getenv("PROMPT_VERSION", "phase5165-v1").strip(),
+            zero_untranslated_recovery_enabled=_env_bool("ZERO_UNTRANSLATED_RECOVERY", True),
+            prompt_version=os.getenv("PROMPT_VERSION", "phase51611-v1").strip(),
+            expert_profile=os.getenv("EXPERT_PROFILE", "sensory_training_food_scientist").strip(),
+            expert_profile_file=_project_path(os.getenv("EXPERT_PROFILE_FILE"), "expert_profiles.yaml"),
             terminology_file=_project_path(os.getenv("TERMINOLOGY_FILE"), "terminology.yaml"),
             standard_terminology_file=_project_path(os.getenv("STANDARD_TERMINOLOGY_FILE"), "food_science_standards.yaml"),
-            state_db=_project_path(os.getenv("STATE_DB"), ".translator_state/phase5165.db"),
+            state_db=_project_path(os.getenv("STATE_DB"), ".translator_state/phase51611.db"),
+            word_state_db=_project_path(os.getenv("WORD_STATE_DB"), ".translator_state/phase522-word.db"),
+            word_save_batch_size=max(1, int(os.getenv("WORD_SAVE_BATCH_SIZE", "20"))),
+            word_smart_eligibility=_env_bool("WORD_SMART_ELIGIBILITY", True),
             tm_db=_project_path(os.getenv("TM_DB"), ".translator_state/translation_memory.db"),
             cache_db=_project_path(os.getenv("CACHE_DB"), ".translator_state/translation_cache.db"),
             input_dir=_project_path(os.getenv("INPUT_DIR"), "input"),

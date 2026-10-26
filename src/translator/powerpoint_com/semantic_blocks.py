@@ -23,22 +23,28 @@ class SemanticTextBlock:
     flattened_text: str
     break_tokens: tuple[str, ...]
     break_values: tuple[str, ...]
+    line_segments: tuple[str, ...]
 
     @classmethod
     def encode(cls, text: str) -> "SemanticTextBlock":
         tokens: list[str] = []
         values: list[str] = []
+        segments: list[str] = []
         pieces: list[str] = []
         last = 0
 
         for index, match in enumerate(_BREAK_RE.finditer(text), start=1):
             token = f"__PPT_BREAK_{index:04d}__"
-            pieces.append(text[last : match.start()])
+            segment = text[last : match.start()]
+            pieces.append(segment)
+            segments.append(segment)
             pieces.append(f" {token} ")
             tokens.append(token)
             values.append(match.group(0))
             last = match.end()
-        pieces.append(text[last:])
+        tail = text[last:]
+        pieces.append(tail)
+        segments.append(tail)
 
         flattened = _BREAK_RE.sub(" ", text)
         flattened = re.sub(r"\s+", " ", flattened).strip()
@@ -49,6 +55,7 @@ class SemanticTextBlock:
             flattened_text=flattened,
             break_tokens=tuple(tokens),
             break_values=tuple(values),
+            line_segments=tuple(segments),
         )
 
     @property

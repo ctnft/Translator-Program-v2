@@ -81,6 +81,16 @@ def test_phase516_context_defaults(monkeypatch, tmp_path):
     assert config.ollama_fallback_model == ""
     assert config.context_fallback_enabled is True
     assert config.context_allow_legacy_tm is False
-    assert config.prompt_version == "phase5165-v1"
-    assert config.state_db.name == "phase5165.db"
+    assert config.prompt_version == "phase51611-v1"
+    assert config.state_db.name == "phase51611.db"
     assert config.standard_terminology_file.name == "food_science_standards.yaml"
+    assert config.expert_profile == "sensory_training_food_scientist"
+    assert config.expert_profile_file.name == "expert_profiles.yaml"
+
+
+def test_phase52_word_checkpoint_default(monkeypatch, tmp_path):
+    monkeypatch.delenv("WORD_STATE_DB", raising=False)
+    env_file = tmp_path / "empty.env"
+    env_file.write_text("", encoding="utf-8")
+    config = AppConfig.load(str(env_file))
+    assert config.word_state_db.name == "phase522-word.db"

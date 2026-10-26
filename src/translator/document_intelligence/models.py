@@ -71,7 +71,7 @@ class DeckAnalysis:
     slides: dict[int, SlideIntelligence]
     elements: dict[str, ElementIntelligence]
     warnings: list[str] = field(default_factory=list)
-    version: str = "phase5165-v1"
+    version: str = "phase51611-v1"
 
     def to_dict(self) -> dict[str, Any]:
         return {

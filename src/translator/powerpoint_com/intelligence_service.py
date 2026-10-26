@@ -30,7 +30,7 @@ class PowerPointIntelligenceService:
         analysis = self.analyzer.analyze(stats, elements)
 
         report = {
-            "phase": "5.1.6.5",
+            "phase": "5.1.6.11",
             "mode": "document_analysis",
             "source_path": str(source_file),
             "stats": stats.to_dict(),
@@ -38,7 +38,7 @@ class PowerPointIntelligenceService:
         }
         if self.output_dir is not None:
             self.output_dir.mkdir(parents=True, exist_ok=True)
-            path = self.output_dir / f"{source_file.stem}.phase5165-analysis.json"
+            path = self.output_dir / f"{source_file.stem}.phase51611-analysis.json"
             path.write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
             report["report_path"] = str(path)
         return report

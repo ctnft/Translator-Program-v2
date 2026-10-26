@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: translator-program
-Version: 0.1.6.5
+Version: 0.2.1
 Requires-Dist: pyyaml>=6.0
 Requires-Dist: python-dotenv>=1.2
 Requires-Dist: httpx>=0.28

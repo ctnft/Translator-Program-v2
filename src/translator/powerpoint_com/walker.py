@@ -19,6 +19,16 @@ def _safe_get(obj: Any, name: str, default: Any = None) -> Any:
         return default
 
 
+def _safe_set(obj: Any, name: str, value: Any) -> bool:
+    if obj is None or value is None:
+        return False
+    try:
+        setattr(obj, name, value)
+        return True
+    except Exception:
+        return False
+
+
 def _is_true(value: Any) -> bool:
     return value not in (None, 0, False)
 
@@ -367,26 +377,347 @@ class PowerPointWalker:
             shape = shape.Table.Cell(element.row, element.column).Shape
         return self._read_shape_text(shape)
 
+    @staticmethod
+    def _font_signature(font: Any) -> dict[str, Any]:
+        if font is None:
+            return {}
+        style: dict[str, Any] = {}
+        for name in ("Name", "Size", "Bold", "Italic", "Underline", "Shadow", "Emboss", "BaselineOffset"):
+            value = _safe_get(font, name)
+            if value is not None:
+                style[name] = value
+        color = _safe_get(font, "Color")
+        rgb = _safe_get(color, "RGB")
+        if rgb is not None:
+            style["ColorRGB"] = rgb
+        return style
+
+    @staticmethod
+    def _apply_font_signature(font: Any, style: dict[str, Any]) -> None:
+        if font is None:
+            return
+        for name, value in style.items():
+            if name == "ColorRGB":
+                color = _safe_get(font, "Color")
+                _safe_set(color, "RGB", value)
+            else:
+                _safe_set(font, name, value)
+
+    @staticmethod
+    def _split_offsets(text: str) -> list[tuple[int, int]]:
+        """Return non-break text spans as zero-based [start,end) offsets."""
+        spans: list[tuple[int, int]] = []
+        start = 0
+        for index, ch in enumerate(text):
+            if ch in {"\r", "\v", "\n"}:
+                spans.append((start, index))
+                start = index + 1
+        spans.append((start, len(text)))
+        return spans
+
+    @staticmethod
+    def _paragraph_offsets(text: str) -> list[tuple[int, int]]:
+        """Return PowerPoint paragraph spans using hard paragraph marks only.
+
+        A vertical tab (\v / Shift+Enter) is a soft line break inside the same
+        paragraph. Treating it as a paragraph boundary can accidentally copy
+        paragraph-level properties such as bullets onto lines that never had
+        them in the source.
+        """
+        spans: list[tuple[int, int]] = []
+        start = 0
+        for index, ch in enumerate(text):
+            if ch == "\r":
+                spans.append((start, index))
+                start = index + 1
+        spans.append((start, len(text)))
+        return spans
+
+    @staticmethod
+    def _paragraph_signature(paragraph_format: Any) -> dict[str, Any]:
+        if paragraph_format is None:
+            return {}
+        data: dict[str, Any] = {}
+        for name in (
+            "Alignment", "BaseLineAlignment", "SpaceBefore", "SpaceAfter", "SpaceWithin",
+        ):
+            value = _safe_get(paragraph_format, name)
+            if value is not None:
+                data[name] = value
+
+        # Bullet is paragraph-level state.  PowerPoint may turn Bullet.Visible
+        # back on merely by assigning Bullet.Type or Bullet.Character.  Therefore
+        # a source paragraph with no bullet must capture ONLY Visible=False and
+        # must never replay the remaining bullet properties.
+        bullet = _safe_get(paragraph_format, "Bullet")
+        if bullet is not None:
+            visible_raw = _safe_get(bullet, "Visible")
+            visible = _is_true(visible_raw)
+            bullet_data: dict[str, Any] = {"Visible": visible}
+            if visible:
+                for name in ("Type", "Character", "RelativeSize", "UseTextColor", "UseTextFont"):
+                    value = _safe_get(bullet, name)
+                    if value is not None:
+                        bullet_data[name] = value
+            data["Bullet"] = bullet_data
+        return data
+
+    @staticmethod
+    def _apply_paragraph_signature(paragraph_format: Any, data: dict[str, Any]) -> None:
+        if paragraph_format is None:
+            return
+
+        # Restore non-bullet paragraph properties first.  Bullet state is handled
+        # separately because Type/Character setters can have Visible side effects.
+        for name, value in data.items():
+            if name != "Bullet":
+                _safe_set(paragraph_format, name, value)
+
+        bullet_data = data.get("Bullet")
+        if not isinstance(bullet_data, dict):
+            return
+        bullet = _safe_get(paragraph_format, "Bullet")
+        if bullet is None:
+            return
+
+        visible = bool(bullet_data.get("Visible", False))
+        if not visible:
+            # Critical invariant: never touch Type/Character for a non-bulleted
+            # source paragraph.  Writing either can create a new bullet in PPT.
+            _safe_set(bullet, "Visible", 0)
+            return
+
+        # For a genuinely bulleted source paragraph, restore its details first
+        # and make it visible only at the end.
+        _safe_set(bullet, "Visible", 0)
+        for bullet_name in ("Type", "Character", "RelativeSize", "UseTextColor", "UseTextFont"):
+            if bullet_name in bullet_data:
+                _safe_set(bullet, bullet_name, bullet_data[bullet_name])
+        _safe_set(bullet, "Visible", -1)
+
+    def _capture_paragraph_styles(self, text_range: Any, text: str) -> list[dict[str, Any]]:
+        characters = _safe_get(text_range, "Characters")
+        captured: list[dict[str, Any]] = []
+        for start, end in self._paragraph_offsets(text):
+            try:
+                length = max(1, end - start)
+                rng = characters(start + 1, length) if callable(characters) else None
+                captured.append(self._paragraph_signature(_safe_get(rng, "ParagraphFormat")))
+            except Exception:
+                captured.append({})
+        return captured
+
+    def _restore_paragraph_styles(self, text_range: Any, target_text: str, styles: list[dict[str, Any]]) -> None:
+        characters = _safe_get(text_range, "Characters")
+        if not callable(characters):
+            return
+        for index, (start, end) in enumerate(self._paragraph_offsets(target_text)):
+            if index >= len(styles) or not styles[index]:
+                continue
+            try:
+                length = max(1, end - start)
+                rng = characters(start + 1, length)
+                self._apply_paragraph_signature(_safe_get(rng, "ParagraphFormat"), styles[index])
+            except Exception:
+                pass
+
+    def _capture_segment_styles(self, text_range: Any, text: str) -> list[list[dict[str, Any]]]:
+        """Capture character font style for each semantic line/paragraph.
+
+        PowerPoint's Replace may extend the first character's format over newly
+        inserted text. Capturing styles per character lets us reconstruct the same
+        style pattern after a length-changing translation. Failures are best-effort:
+        geometry preservation still applies even on unusual COM text objects.
+        """
+        captured: list[list[dict[str, Any]]] = []
+        characters = _safe_get(text_range, "Characters")
+        for start, end in self._split_offsets(text):
+            styles: list[dict[str, Any]] = []
+            for offset in range(start, end):
+                try:
+                    char_range = characters(offset + 1, 1) if callable(characters) else None
+                    styles.append(self._font_signature(_safe_get(char_range, "Font")))
+                except Exception:
+                    styles.append({})
+            captured.append(styles)
+        return captured
+
+    def _restore_segment_styles(
+        self,
+        text_range: Any,
+        source_styles: list[list[dict[str, Any]]],
+        target_text: str,
+    ) -> None:
+        characters = _safe_get(text_range, "Characters")
+        if not callable(characters):
+            return
+        target_spans = self._split_offsets(target_text)
+        for segment_index, (start, end) in enumerate(target_spans):
+            target_len = max(0, end - start)
+            if target_len == 0 or segment_index >= len(source_styles):
+                continue
+            styles = source_styles[segment_index]
+            if not styles:
+                continue
+            source_len = len(styles)
+            mapped: list[dict[str, Any]] = []
+            for j in range(target_len):
+                source_index = min(source_len - 1, int(j * source_len / target_len))
+                mapped.append(styles[source_index])
+
+            run_start = 0
+            while run_start < target_len:
+                style = mapped[run_start]
+                run_end = run_start + 1
+                while run_end < target_len and mapped[run_end] == style:
+                    run_end += 1
+                if style:
+                    try:
+                        rng = characters(start + run_start + 1, run_end - run_start)
+                        self._apply_font_signature(_safe_get(rng, "Font"), style)
+                    except Exception:
+                        pass
+                run_start = run_end
+
+    @staticmethod
+    def _capture_geometry(shape: Any) -> dict[str, Any]:
+        return {
+            "Left": _safe_get(shape, "Left"),
+            "Top": _safe_get(shape, "Top"),
+            "Width": _safe_get(shape, "Width"),
+            "Height": _safe_get(shape, "Height"),
+            "Rotation": _safe_get(shape, "Rotation"),
+        }
+
+    @staticmethod
+    def _restore_geometry(shape: Any, state: dict[str, Any]) -> None:
+        for name in ("Left", "Top", "Width", "Height", "Rotation"):
+            _safe_set(shape, name, state.get(name))
+
+    @staticmethod
+    def _capture_textframe_state(shape: Any) -> dict[str, Any]:
+        frame = _safe_get(shape, "TextFrame")
+        frame2 = _safe_get(shape, "TextFrame2")
+        return {
+            "frame": frame,
+            "frame2": frame2,
+            "AutoSize": _safe_get(frame, "AutoSize"),
+            "AutoSize2": _safe_get(frame2, "AutoSize"),
+            "WordWrap": _safe_get(frame, "WordWrap"),
+            "WordWrap2": _safe_get(frame2, "WordWrap"),
+            "MarginLeft": _safe_get(frame, "MarginLeft"),
+            "MarginRight": _safe_get(frame, "MarginRight"),
+            "MarginTop": _safe_get(frame, "MarginTop"),
+            "MarginBottom": _safe_get(frame, "MarginBottom"),
+            "VerticalAnchor": _safe_get(frame, "VerticalAnchor"),
+        }
+
+    @staticmethod
+    def _freeze_and_restore_textframe(state: dict[str, Any], *, final: bool) -> None:
+        frame = state.get("frame")
+        frame2 = state.get("frame2")
+        # During and after translation keep AutoSize disabled. Re-enabling an
+        # original ShapeToFitText mode would silently change Width/Height, which
+        # violates source-faithful layout preservation.
+        _safe_set(frame, "AutoSize", 0)
+        _safe_set(frame2, "AutoSize", 0)
+        if final:
+            for name in ("WordWrap", "MarginLeft", "MarginRight", "MarginTop", "MarginBottom", "VerticalAnchor"):
+                _safe_set(frame, name, state.get(name))
+            _safe_set(frame2, "WordWrap", state.get("WordWrap2"))
+
+    @staticmethod
+    def _capture_table_layout(table: Any) -> dict[str, list[Any]]:
+        rows = _safe_get(table, "Rows")
+        cols = _safe_get(table, "Columns")
+        row_heights: list[Any] = []
+        col_widths: list[Any] = []
+        try:
+            row_count = int(_safe_get(rows, "Count", 0) or 0)
+            for index in range(1, row_count + 1):
+                row_heights.append(_safe_get(rows.Item(index), "Height"))
+        except Exception:
+            row_heights = []
+        try:
+            col_count = int(_safe_get(cols, "Count", 0) or 0)
+            for index in range(1, col_count + 1):
+                col_widths.append(_safe_get(cols.Item(index), "Width"))
+        except Exception:
+            col_widths = []
+        return {"row_heights": row_heights, "col_widths": col_widths}
+
+    @staticmethod
+    def _restore_table_layout(table: Any, state: dict[str, list[Any]]) -> None:
+        rows = _safe_get(table, "Rows")
+        cols = _safe_get(table, "Columns")
+        for index, value in enumerate(state.get("row_heights", []), start=1):
+            try:
+                _safe_set(rows.Item(index), "Height", value)
+            except Exception:
+                pass
+        for index, value in enumerate(state.get("col_widths", []), start=1):
+            try:
+                _safe_set(cols.Item(index), "Width", value)
+            except Exception:
+                pass
+
+    def _resolve_shape_chain(self, presentation: Any, element: TextElement) -> list[Any]:
+        slide = _safe_get(presentation, "Slides").Item(element.slide_index)
+        if not element.shape_path:
+            raise ValueError("TextElement tidak memiliki shape_path.")
+        chain: list[Any] = []
+        shape = _safe_get(slide, "Shapes").Item(element.shape_path[0])
+        chain.append(shape)
+        for child_index in element.shape_path[1:]:
+            shape = _safe_get(shape, "GroupItems").Item(child_index)
+            chain.append(shape)
+        return chain
+
     def apply_segment_replacements(
         self,
         presentation: Any,
         element: TextElement,
         replacements: list[tuple[str, str]],
     ) -> str:
-        shape = self._resolve_shape(presentation, element)
+        chain = self._resolve_shape_chain(presentation, element)
+        shape = chain[-1]
+        geometry_states = [(item, self._capture_geometry(item)) for item in chain]
+        table_layout: tuple[Any, dict[str, list[Any]]] | None = None
         if element.kind == "table_cell":
             if element.row is None or element.column is None:
                 raise ValueError("Table element tidak memiliki row/column.")
-            shape = shape.Table.Cell(element.row, element.column).Shape
+            table = shape.Table
+            table_layout = (table, self._capture_table_layout(table))
+            shape = table.Cell(element.row, element.column).Shape
+            geometry_states.append((shape, self._capture_geometry(shape)))
+
+        frame_state = self._capture_textframe_state(shape)
         text_range = shape.TextFrame.TextRange
-        for source, target in replacements:
-            if source == target or not source:
-                continue
-            found = text_range.Replace(source, target, 0, MSO_TRUE, MSO_FALSE)
-            if found is None:
-                raise ValueError(
-                    f"Source segment tidak ditemukan pada target element: {source!r}"
-                )
+        source_text = str(_safe_get(text_range, "Text", ""))
+        source_styles = self._capture_segment_styles(text_range, source_text)
+        paragraph_styles = self._capture_paragraph_styles(text_range, source_text)
+        self._freeze_and_restore_textframe(frame_state, final=False)
+
+        try:
+            for source, target in replacements:
+                if source == target or not source:
+                    continue
+                found = text_range.Replace(source, target, 0, MSO_TRUE, MSO_FALSE)
+                if found is None:
+                    raise ValueError(
+                        f"Source segment tidak ditemukan pada target element: {source!r}"
+                    )
+            final_text = str(_safe_get(text_range, "Text", ""))
+            self._restore_segment_styles(text_range, source_styles, final_text)
+            self._restore_paragraph_styles(text_range, final_text, paragraph_styles)
+        finally:
+            self._freeze_and_restore_textframe(frame_state, final=True)
+            if table_layout is not None:
+                self._restore_table_layout(table_layout[0], table_layout[1])
+            # Restore deepest object first, then its group/container ancestors.
+            for item, state in reversed(geometry_states):
+                self._restore_geometry(item, state)
+
         return str(_safe_get(text_range, "Text", ""))
 
     @staticmethod

@@ -86,3 +86,37 @@ class TranslationProgressStore:
                     datetime.now(UTC).isoformat(),
                 ),
             )
+
+    def save_many(self, records):
+        """Persist multiple progress rows in one SQLite transaction.
+
+        Each record is a mapping accepted by :meth:`save`. This is used by the
+        Word adapter to keep checkpoint durability without opening/committing a
+        SQLite transaction for every single Word element.
+        """
+        rows = []
+        now = datetime.now(UTC).isoformat()
+        for record in records:
+            source_text = str(record.get("source_text", ""))
+            rows.append((
+                str(record["document_id"]),
+                str(record["element_key"]),
+                self.source_hash(source_text),
+                source_text,
+                record.get("target_text"),
+                str(record["status"]),
+                record.get("origin"),
+                record.get("error"),
+                str(record.get("translation_version", "")),
+                now,
+            ))
+        if not rows:
+            return
+        with sqlite3.connect(self.db_path) as conn:
+            conn.executemany(
+                """INSERT OR REPLACE INTO translation_progress
+                   (document_id,element_key,source_hash,source_text,target_text,status,origin,error,translation_version,updated_at)
+                   VALUES (?,?,?,?,?,?,?,?,?,?)""",
+                rows,
+            )
+

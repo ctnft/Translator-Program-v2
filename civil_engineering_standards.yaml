@@ -1,0 +1,8 @@
+domain: civil_engineering_building
+version: "2026.10.22-1"
+policy:
+  note: >-
+    Reserved for civil/building terminology that has been explicitly verified against
+    applicable Indonesian SNI or PUPR/public-works references. No term in this file
+    should be labelled as an official regulatory/SNI mapping without verification.
+terms: []

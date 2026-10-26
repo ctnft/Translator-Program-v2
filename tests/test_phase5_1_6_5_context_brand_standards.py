@@ -178,4 +178,4 @@ def test_authoritative_glossary_is_sent_to_model(tmp_path):
     guidance = client2.calls[0]["user"]["authoritative_terminology"]
     assert guidance[0]["target"] == "Krimer Nabati"
     assert guidance[0]["authority"] == "SNI_BSN"
-    assert "BPOM/SNI" in client2.calls[0]["system"]
+    assert "terminology authority order" in client2.calls[0]["system"]

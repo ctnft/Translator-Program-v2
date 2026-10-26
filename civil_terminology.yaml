@@ -1,0 +1,87 @@
+domain: civil_engineering_building
+version: "1.0"
+terms:
+  - source: Reinforced Concrete
+    target: Beton Bertulang
+    status: locked
+    authority: established_engineering_usage
+  - source: Structural Steel
+    target: Baja Struktural
+    status: locked
+    authority: established_engineering_usage
+  - source: Foundation
+    target: Fondasi
+    status: locked
+    authority: established_engineering_usage
+  - source: Pile Foundation
+    target: Fondasi Tiang
+    status: locked
+    authority: established_engineering_usage
+  - source: Shallow Foundation
+    target: Fondasi Dangkal
+    status: locked
+    authority: established_engineering_usage
+  - source: Beam
+    target: Balok
+    status: locked
+    authority: established_engineering_usage
+  - source: Column
+    target: Kolom
+    status: locked
+    authority: established_engineering_usage
+  - source: Slab
+    target: Pelat
+    status: locked
+    authority: established_engineering_usage
+  - source: Shear Wall
+    target: Dinding Geser
+    status: locked
+    authority: established_engineering_usage
+  - source: Retaining Wall
+    target: Dinding Penahan Tanah
+    status: locked
+    authority: established_engineering_usage
+  - source: Reinforcement
+    target: Tulangan
+    status: locked
+    authority: established_engineering_usage
+  - source: Rebar
+    target: Baja Tulangan
+    status: locked
+    authority: established_engineering_usage
+  - source: Formwork
+    target: Bekisting
+    status: locked
+    authority: established_engineering_usage
+  - source: Concrete Cover
+    target: Selimut Beton
+    status: locked
+    authority: established_engineering_usage
+  - source: Compressive Strength
+    target: Kuat Tekan
+    status: locked
+    authority: established_engineering_usage
+  - source: Construction Joint
+    target: Sambungan Konstruksi
+    status: locked
+    authority: established_engineering_usage
+  - source: Expansion Joint
+    target: Sambungan Muai
+    status: locked
+    authority: established_engineering_usage
+  - source: Anchor Bolt
+    target: Baut Angkur
+    status: locked
+    authority: established_engineering_usage
+  - source: Concrete Grade
+    target: Mutu Beton
+    status: locked
+    authority: established_engineering_usage
+  - source: Method Statement
+    target: Metode Pelaksanaan
+    status: approved
+    authority: established_project_usage
+  - source: Bill of Quantities
+    target: Daftar Kuantitas
+    status: approved
+    authority: established_project_usage

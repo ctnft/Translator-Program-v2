@@ -31,13 +31,30 @@ class ProtectedText:
 
 
 class ProtectedSpanEngine:
+    """Protect only spans that are truly immutable.
+
+    Phase 5.1.6.10 deliberately removes the old broad chemical/acronym pattern
+    because it misclassified ordinary acronyms such as ``SKU`` / ``SKUs`` as
+    chemistry and could make an entire textbox fail validation.
+
+    Brands and approved acronyms are handled by document-intelligence / terminology
+    preserve locks. This layer protects deterministic values that must survive
+    translation byte-for-byte: URLs, e-mail/domain names, structured document codes,
+    formula-like tokens, pH, and numbers/units.
+    """
+
     _pattern = re.compile(
         r"https?://\S+|www\.\S+|"
         r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b|"
         r"(?i:\b[A-Za-z0-9.-]+\.(?:com|org|net|id|co\.id)\b)|"
-        r"\b(?:[A-Z][a-z]?\d*){2,}\b|"
+        # Structured document/protocol identifiers such as QFS-AE-SPT-013.
+        r"\b[A-Z]{2,}(?:-[A-Z0-9]{2,}){2,}\b|"
+        # Formula-like tokens with an explicit digit: CO2, H2O, FeCl3.
+        # Requiring a digit prevents SKU/SKUs from being classified as chemistry.
+        r"\b(?=[A-Za-z0-9]*\d)(?:[A-Z][a-z]?\d*){2,}\b|"
+        # Conventional mixed-case formula without a digit, e.g. NaCl.
+        r"\b(?:[A-Z][a-z]){2,}\b|"
         r"\bpH\b|"
-        r"\b[A-Z][A-Z0-9_-]{1,}\b|"
         r"(?<!\w)[+-]?\d+(?:[.,]\d+)*(?:\s*(?:%|°C|°F|mg|kg|g|µg|ug|mL|ml|L|s|min|h|hr|rpm|kPa|MPa|Pa|bar|ppm|ppb|Hz|kHz|MHz))?(?!\w)"
     )
 

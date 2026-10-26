@@ -1,5 +1,5 @@
 domain: food_science
-version: "1.5"
+version: "1.7"
 terms:
   # Core food-science terminology
   - source: pasteurization
@@ -20,6 +20,56 @@ terms:
     confidence: 1.0
   - source: heat treatment
     target: perlakuan panas
+    status: locked
+    confidence: 1.0
+
+  # Presentation/training terminology validated from live deck review.
+  - source: Short Break
+    target: Istirahat Singkat
+    status: approved
+    confidence: 1.0
+  - source: Training Room
+    target: Ruang Pelatihan
+    status: approved
+    confidence: 1.0
+  - source: Agenda Building and Sessions Customization
+    target: Penyusunan Agenda dan Penyesuaian Sesi
+    status: locked
+    confidence: 1.0
+  - source: According to Product Categories Required
+    target: Sesuai Kategori Produk yang Diperlukan
+    status: locked
+    confidence: 1.0
+  - source: Sensory Panel Leader Training
+    target: Pelatihan Pemimpin Panel Sensori
+    status: locked
+    confidence: 1.0
+  - source: Training Room and Materials Requirement
+    target: Persyaratan Ruang dan Materi Pelatihan
+    status: locked
+    confidence: 1.0
+  - source: No. of Panelist
+    target: Jumlah Panelis
+    status: locked
+    confidence: 1.0
+  - source: Sensory Management
+    target: Manajemen Sensori
+    status: locked
+    confidence: 1.0
+  - source: Panel Formation
+    target: Pembentukan Panel
+    status: locked
+    confidence: 1.0
+  - source: Resume of Training
+    target: Ringkasan Pelatihan
+    status: locked
+    confidence: 1.0
+  - source: On-site Preparation
+    target: Persiapan di Lokasi
+    status: locked
+    confidence: 1.0
+  - source: Tasks during Training Days
+    target: Tugas selama Hari Pelatihan
     status: locked
     confidence: 1.0
 
@@ -80,19 +130,19 @@ terms:
     confidence: 1.0
   - source: Off Notes
     target: Rasa Menyimpang
-    status: locked
+    status: approved
     confidence: 1.0
   - source: Off Note
     target: Rasa Menyimpang
-    status: locked
+    status: approved
     confidence: 1.0
   - source: off-notes
     target: rasa menyimpang
-    status: locked
+    status: approved
     confidence: 1.0
   - source: off-note
     target: rasa menyimpang
-    status: locked
+    status: approved
     confidence: 1.0
   - source: Typical Concentration Range
     target: Rentang Konsentrasi Tipikal
